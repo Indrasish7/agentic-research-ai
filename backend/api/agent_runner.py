@@ -1,7 +1,7 @@
-from planner.planner import Planner
-from executor.executor import Executor
-from evaluator.evaluator import Evaluator
-from state.state_manager import AgentState
+from backend.planner.planner import Planner
+from backend.executor.executor import Executor
+from backend.evaluator.evaluator import Evaluator
+from backend.state.state_manager import AgentState
 
 
 def run_agent(objective: str) -> dict:

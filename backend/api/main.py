@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from api.schemas import AgentRequest, AgentResponse
-from api.agent_runner import run_agent
+from backend.api.schemas import AgentRequest, AgentResponse
+from backend.api.agent_runner import run_agent
 
 app = FastAPI(
     title="Agentic Research AI",

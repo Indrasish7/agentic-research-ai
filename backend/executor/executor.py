@@ -1,6 +1,6 @@
-from tools.web_search import web_search
-from tools.summarizer import summarize
-from tools.python_executor import python_executor
+from backend.tools.web_search import web_search
+from backend.tools.summarizer import summarize
+from backend.tools.python_executor import python_executor
 
 
 class Executor:
