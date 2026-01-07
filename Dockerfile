@@ -1,25 +1,32 @@
-# Use slim Python image
+# ---------- Base image ----------
 FROM python:3.11-slim
 
-# Set working directory
+# ---------- Set working directory ----------
 WORKDIR /app
 
-# Install system dependencies (optional but safe)
+# ---------- System dependencies ----------
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first (for layer caching)
-COPY requirements.txt .
+# ---------- Backend ----------
+COPY backend backend
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
 
-# Copy application code
-COPY . .
+# ---------- Frontend ----------
+COPY frontend frontend
+WORKDIR /app/frontend
+RUN npm install
+RUN npm run build
 
-# Expose Cloud Run port
-EXPOSE 8080
+# ---------- Back to app root ----------
+WORKDIR /app
 
-# Run FastAPI with Uvicorn
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# ---------- Environment ----------
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8080
+
+# ---------- Start server ----------
+CMD ["uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8080"]

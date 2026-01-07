@@ -1,40 +1,30 @@
-import random
+import os
+from google import genai
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def web_search(query: str) -> str:
     """
-    Simulated realistic web search tool.
-    Returns structured, content-rich results.
+    LLM-powered web research tool.
+    Simulates research without hardcoding domain logic.
     """
 
-    # Simulate transient failure
-    if random.random() < 0.15:
-        return "Error: Search service unavailable"
+    prompt = f"""
+You are a research assistant.
 
-    results = [
-        {
-            "name": "Adyen",
-            "focus": "Enterprise payment processing",
-            "strengths": "Global reach, strong compliance, scalable infrastructure",
-            "weaknesses": "Complex integration, higher cost"
-        },
-        {
-            "name": "PayPal / Braintree",
-            "focus": "Online payments and wallets",
-            "strengths": "Brand recognition, consumer trust, easy setup",
-            "weaknesses": "Higher transaction fees, limited customization"
-        },
-        {
-            "name": "Square",
-            "focus": "SMB point-of-sale and payments",
-            "strengths": "Ease of use, POS integration",
-            "weaknesses": "Limited international reach"
-        },
-        {
-            "name": "Checkout.com",
-            "focus": "Global digital payments",
-            "strengths": "Strong API, international support",
-            "weaknesses": "Less ecosystem maturity than Stripe"
-        }
-    ]
+Task:
+- Research the following query
+- Produce factual, structured information
+- No markdown
+- No explanations about what you are doing
 
-    return f"Search results for query '{query}':\n{results}"
+Query:
+"{query}"
+"""
+
+    response = client.models.generate_content(
+        model="gemini-3-flash-preview",
+        contents=prompt
+    )
+
+    return response.text.strip()
