@@ -1,40 +1,27 @@
-# Agentic Research AI
+# 🧠 Agentic Research AI
 
-An **autonomous, task-oriented Agentic AI system** that plans, executes, evaluates, and terminates multi-step research tasks using structured planning, tool orchestration, and stateful execution.
-
-This project demonstrates **agentic AI system design**, not just LLM tool usage.
+An end-to-end **Agentic AI system** that autonomously plans, executes, evaluates, and completes multi-step research tasks using **LLMs (Gemini)**, **FastAPI**, and a **React + Tailwind frontend**, fully deployed on **Google Cloud Run**.
 
 ---
 
-## 🔍 What This Project Does
+## 🚀 Live Demo
 
-Given a high-level goal such as:
-
-> *“Analyze competitors of Stripe”*
-
-The system:
-1. **Plans** a structured sequence of steps
-2. **Selects tools autonomously** for each step
-3. **Executes steps sequentially**
-4. **Tracks state and intermediate outputs**
-5. **Terminates cleanly** after completing the task
-
-This is a foundation for **reliable, controllable autonomous AI systems**.
+**Cloud Run URL:**  
+👉 https://agentic-ai-539457733412.asia-south1.run.app
 
 ---
 
-## 🧠 Why Agentic AI (Not Just an AI Agent)
+## 🧩 What is Agentic Research AI?
 
-Unlike simple AI agents or chatbots, this system is **agentic**:
+Unlike traditional AI chat systems, this project implements a **true agentic loop**:
 
-- Explicit goal representation
-- Structured planning (JSON plans)
-- Autonomous tool selection
-- Stateful execution
-- Deterministic control flow
-- Designed for evaluation, retries, and termination
+1. **Planning** – Breaks a high-level goal into structured steps  
+2. **Execution** – Selects and runs tools autonomously  
+3. **Evaluation** – Decides success, retry, or failure  
+4. **State Tracking** – Maintains execution state and metrics  
+5. **Termination** – Produces a final grounded result  
 
-> **Agentic AI = decision-making systems, not just responses.**
+No hard-coded answers. No static flows.
 
 ---
 
@@ -43,113 +30,186 @@ Unlike simple AI agents or chatbots, this system is **agentic**:
 ```
 User Goal
    ↓
-Planner (LLM)
+Planner (Gemini)
    ↓
 Structured Plan (JSON)
    ↓
-Executor
+Executor (Tools)
    ↓
-Tool Calls
+Evaluator (Retry / Fail / Success)
    ↓
 State Manager
    ↓
-Final Output
+Final Result
 ```
+
+### Core Tools
+- `web_search` – Research queries
+- `summarizer` – Information synthesis
+- `python_executor` – Controlled computation
+
+---
+
+## 🖥️ Tech Stack
+
+### Backend
+- **FastAPI**
+- **Google Gemini API**
+- **Python 3.11**
+- **Docker**
+- **Cloud Run**
+
+### Frontend
+- **React**
+- **Tailwind CSS**
+- **Framer Motion**
+- **Axios**
+
+### Infrastructure
+- **Docker**
+- **Google Cloud Build**
+- **Artifact Registry**
+- **Cloud Run**
 
 ---
 
 ## 📁 Project Structure
 
 ```
-agentic-research-ai/ 
-├── planner/           # Converts goals into structured execution plans
-├── executor/          # Executes steps using autonomous tool selection
-├── evaluator/         # (Phase 1.3) Evaluates step success & termination
-├── tools/             # Tool implementations (search, summarization, code)
-├── state/             # Tracks execution state & intermediate outputs
-├── main.py            # Orchestrates the agent loop
-├── requirements.txt   # Dependencies
+agentic-research-agent/
+│
+├── backend/
+│   ├── api/
+│   │   ├── main.py
+│   │   ├── agent_runner.py
+│   │   └── schemas.py
+│   ├── planner/
+│   ├── executor/
+│   ├── evaluator/
+│   ├── state/
+│   └── tools/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+|   ├── postcss.config.js
+│   └── tailwind.config.js
+│
+├── Dockerfile
+├── .dockerignore
+├── .gitignore
 └── README.md
 ```
 
 ---
 
-## ⚙️ Core Components
+## 🧪 Local Development
 
-### Planner
-- Uses **Gemini (google.genai)**
-- Outputs **JSON-only structured plans**
-- No execution logic
-- No free-text output
-
-### Executor
-- Dynamically selects and executes tools
-- Reads planner output
-- Executes steps sequentially
-
-### Tools
-- web_search – research queries
-- summarizer – text summarization
-- python_executor – controlled code execution
-
-### State Manager
-- Tracks completed steps and outputs
-- Stores intermediate outputs
-- Enables evaluation & retries
-
----
-
-## 🚀 How to Run Locally
+### 1️⃣ Backend (FastAPI)
 
 ```bash
-git clone https://github.com/Indrasish7/agentic-research-ai.git
-cd agentic-research-ai
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
 pip install -r requirements.txt
+uvicorn backend.api.main:app --reload --port 8000
 ```
 
-Create a `.env` file:
+Health check:
 ```
-GEMINI_API_KEY=your_api_key_here
+http://localhost:8000/api/health
 ```
 
-Run:
+---
+
+### 2️⃣ Frontend (React)
+
 ```bash
-python main.py
+cd frontend
+npm install
+npm start
+```
+
+Create production build:
+```bash
+npm run build
 ```
 
 ---
-## 🧠 Design Principles
 
-- **Explicit over implicit** — structured plans over free-text reasoning  
-- **Control over autonomy** — no infinite loops or uncontrolled execution  
-- **Stateful execution** — all steps and outputs are tracked  
-- **Production-oriented architecture** — modular, debuggable components  
-- **Interview-defensible system design** — clear trade-offs and explainable decisions
----
+## 🐳 Docker (Local)
 
-## 🛣️ Roadmap
+```bash
+docker build -t agentic-ai .
+docker run -p 8080:8080 -e GEMINI_API_KEY=YOUR_KEY agentic-ai
+```
 
-- [x] Structured planner
-- [x] Autonomous executor loop
-- [x] State tracking
-- [ ] Evaluation & retry logic
-- [ ] Termination guards
-- [ ] API deployment
+App runs at:
+```
+http://localhost:8080
+```
 
 ---
 
-## 👤 Author
+## ☁️ Deployment (Google Cloud Run)
+
+### 1️⃣ Create Project & Enable APIs
+
+```bash
+gcloud projects create agentic-research-ai-prod
+gcloud config set project agentic-research-ai-prod
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com
+```
+
+---
+
+### 2️⃣ Build & Push Image
+
+```bash
+gcloud builds submit --tag asia-south1-docker.pkg.dev/agentic-research-ai-prod/agentic-repo/agentic-ai .
+```
+
+---
+
+### 3️⃣ Deploy
+
+```bash
+gcloud run deploy agentic-ai   --image asia-south1-docker.pkg.dev/agentic-research-ai-prod/agentic-repo/agentic-ai   --platform managed   --region asia-south1   --allow-unauthenticated   --set-env-vars GEMINI_API_KEY=YOUR_KEY
+```
+
+---
+
+## 🔐 Environment Variables
+
+| Variable | Description |
+|--------|------------|
+| `GEMINI_API_KEY` | Google Gemini API key |
+| `REACT_APP_BACKEND_URL` | Backend base URL (frontend) |
+
+---
+
+## 📈 Metrics & Observability
+
+- Steps executed
+- Retry counts
+- Tool success rate
+- Execution state tracking
+
+---
+
+## 👨‍💻 Author
 
 **Indrasish Bhattacharjee**  
-AI Engineer | Applied AI Systems | Agentic AI  
-
-- **GitHub:** https://github.com/Indrasish7  
-- **LinkedIn:** https://www.linkedin.com/in/indrasishbhattacharjee/
+- GitHub: https://github.com/Indrasish7  
+- LinkedIn: https://www.linkedin.com/in/indrasishbhattacharjee/
 
 ---
 
-## 📄 License
+## 📜 License
 
-This project is licensed under the MIT License.
+MIT License
+
+---
+
+⭐ If you like this project, consider giving it a star!
